@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  master:
+    build: 
+      context: ./master_node
+    privileged: true
+    container_name: master
+    tty: true
+    networks:
+      - frontend
+    volumes:
+      - ./master_logs/nginx:/var/log/nginx
+      - ./master_logs/keepalived:/var/log/keepalived
+      - ./master_logs/logrotate:/var/log/logrotate
+
+  backup:
+    build: 
+      context: ./backup_node
+    privileged: true
+    container_name: backup
+    tty: true
+    networks:
+      - frontend
+    volumes:
+      - ./backup_logs/nginx:/var/log/nginx
+      - ./backup_logs/keepalived:/var/log/keepalived
+      - ./backup_logs/logrotate:/var/log/logrotate
+
+networks:
+  frontend:
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "172.20.0.1"
+    ipam:
+      config:
+        - subnet: "172.20.0.0/16"
+
+
+   
